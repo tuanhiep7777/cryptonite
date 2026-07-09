@@ -401,55 +401,7 @@ Halving schedule:
 
 ---
 
-## Session 8 — Block Mechanics, Nodes, Security Budget
-
-**Q1: What is the purpose of gas limit per block? What happens when gas limit is hit before the 12s slot ends?**
-
-**Purpose of gas limit:**
-- Bounds how long a block takes to execute (prevents infinite loops halting the network)
-- Throttles throughput to keep full node requirements manageable
-- Without it, one malicious tx could loop forever and halt the network
-
-**When gas limit is hit before 12s:**
-
-The proposer broadcasts immediately — does not wait:
-```
-t=0s   Slot begins, proposer selected
-t=2s   Block fills to 30M gas limit
-t=2s   Block broadcast immediately (don't wait for 12s)
-t=2–12s  Other validators attest
-t=12s  Next slot begins
-```
-
-Proposer incentive: fill block as fast as possible, collect all tips, broadcast early. The 12s is a ceiling, not a target. In practice a proposer can build and broadcast a block in under 1 second.
-
-Proposers prioritize **highest tip/gas txs first** from the mempool — not arrival order. That's why during congestion you pay more tip to jump the queue.
-
-**Q2: Bitcoin adjusts difficulty to maintain 10 min/block target, right?**
-
-Yes. Bitcoin's **automatic difficulty adjustment** runs every 2,016 blocks (~2 weeks):
-
-```
-new_difficulty = old_difficulty × (target_time / actual_time)
-
-target_time = 2,016 × 10 min = 20,160 min
-
-Scenario A: miners got faster
-  actual_time = 8,000 min
-  new_difficulty = old × (20,160 / 8,000) = old × 2.52 → harder
-
-Scenario B: miners got slower
-  actual_time = 35,000 min
-  new_difficulty = old × (20,160 / 35,000) = old × 0.576 → easier
-```
-
-"Difficulty" = the block hash must start with a certain number of leading zeros. More zeros = exponentially harder to find by chance.
-
-This is why Bitcoin's 10 min/block has held for 16 years despite hashrate growing by orders of magnitude. The only lag is the 2-week adjustment window.
-
----
-
-## Session 9 — Minting, Block Timing, Security Budget References
+## Session 8 — Minting, Block Timing, Security Budget References
 
 **Q1: Why is minted ETH the same on busy vs quiet days? More txs = more validation = more minting?**
 
@@ -533,3 +485,51 @@ This is called the **"security budget problem"** — search that exact phrase.
 
 **Academic paper:**
 Search Google Scholar for: **"On the Instability of Bitcoin Without the Block Reward"** — Carlsten et al. (Princeton, 2019). Most cited academic treatment of this topic.
+
+---
+
+## Session 9 — Block Mechanics, Nodes, Security Budget
+
+**Q1: What is the purpose of gas limit per block? What happens when gas limit is hit before the 12s slot ends?**
+
+**Purpose of gas limit:**
+- Bounds how long a block takes to execute (prevents infinite loops halting the network)
+- Throttles throughput to keep full node requirements manageable
+- Without it, one malicious tx could loop forever and halt the network
+
+**When gas limit is hit before 12s:**
+
+The proposer broadcasts immediately — does not wait:
+```
+t=0s   Slot begins, proposer selected
+t=2s   Block fills to 30M gas limit
+t=2s   Block broadcast immediately (don't wait for 12s)
+t=2–12s  Other validators attest
+t=12s  Next slot begins
+```
+
+Proposer incentive: fill block as fast as possible, collect all tips, broadcast early. The 12s is a ceiling, not a target. In practice a proposer can build and broadcast a block in under 1 second.
+
+Proposers prioritize **highest tip/gas txs first** from the mempool — not arrival order. That's why during congestion you pay more tip to jump the queue.
+
+**Q2: Bitcoin adjusts difficulty to maintain 10 min/block target, right?**
+
+Yes. Bitcoin's **automatic difficulty adjustment** runs every 2,016 blocks (~2 weeks):
+
+```
+new_difficulty = old_difficulty × (target_time / actual_time)
+
+target_time = 2,016 × 10 min = 20,160 min
+
+Scenario A: miners got faster
+  actual_time = 8,000 min
+  new_difficulty = old × (20,160 / 8,000) = old × 2.52 → harder
+
+Scenario B: miners got slower
+  actual_time = 35,000 min
+  new_difficulty = old × (20,160 / 35,000) = old × 0.576 → easier
+```
+
+"Difficulty" = the block hash must start with a certain number of leading zeros. More zeros = exponentially harder to find by chance.
+
+This is why Bitcoin's 10 min/block has held for 16 years despite hashrate growing by orders of magnitude. The only lag is the 2-week adjustment window.

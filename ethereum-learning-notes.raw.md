@@ -528,68 +528,6 @@ Open question: when the reward reaches near-zero, will transaction fees alone be
 
 ---
 
-**Q1: What is the purpose of gas limit per block? What happens if the 12s slot hasn't ended but gas hits the limit — does the proposer stop and wait?**
-
-**Purpose of gas limit:**
-
-```
-No gas limit scenario:
-  Someone submits 1 tx that loops forever
-  → EVM runs forever
-  → Block never finishes executing
-  → Network halts
-
-With gas limit:
-  Every EVM operation costs gas
-  Block cap = 30M gas
-  → Any tx that hits the cap mid-execution → reverts, not included
-  → Block execution time is mathematically bounded
-```
-
-Also a **throughput throttle** — prevents state from growing so fast that only data centers can sync → network centralizes.
-
-**When gas limit is hit before 12s:**
-
-The proposer **immediately broadcasts the block — does not wait**:
-
-```
-t=0s    Slot begins, proposer selected
-t=2s    Block fills to 30M gas limit
-t=2s    Block broadcast immediately (don't wait for 12s)
-t=2–12s Other validators attest (vote to confirm)
-t=12s   Next slot begins
-```
-
-Proposer incentive reasoning is exactly right: they already collected all the tips they can fit. Adding more is impossible (protocol rejects it). Optimal strategy: fill the block as fast as possible, broadcast early. In practice a proposer can build and broadcast a block in under 1 second.
-
-Proposers prioritize **highest tip/gas txs first** from the mempool — not arrival order. That's why during congestion you pay a higher tip to jump the queue.
-
----
-
-**Q2: Bitcoin needs to adjust its difficulty to "regression" its mined time per block to the target (10 mins), doesn't it?**
-
-Yes. Bitcoin has an **automatic difficulty adjustment** every 2,016 blocks (~2 weeks):
-
-```
-new_difficulty = old_difficulty × (target_time / actual_time)
-
-target_time = 2,016 × 10 min = 20,160 min
-
-Scenario A: miners got faster (more hashrate joined)
-  actual_time = 8,000 min
-  new_difficulty = old × (20,160 / 8,000) = old × 2.52 → harder
-
-Scenario B: miners got slower (hashrate left, e.g. China mining ban 2021)
-  actual_time = 35,000 min
-  new_difficulty = old × (20,160 / 35,000) = old × 0.576 → easier
-```
-
-"Difficulty" = the block hash must start with a certain number of leading zeros. More zeros = exponentially harder to find by chance. Miners roll dice billions of times per second until they find a number below the target threshold.
-
-This is why Bitcoin's 10 min/block has held for 16 years despite hashrate growing by orders of magnitude. The only lag is the 2-week adjustment window.
-
----
-
 **Q1: "Fixed mint is ~1,750 ETH/day regardless of activity" — why same on busy vs quiet days? More txs = more validation work = more minting?**
 
 Minting is **per block, not per transaction**:
@@ -681,3 +619,65 @@ This is called the **"security budget problem"** — search that exact phrase.
 
 **Academic paper:**
 Search Google Scholar for: **"On the Instability of Bitcoin Without the Block Reward"** — Carlsten et al. (Princeton, 2019). Most cited academic treatment of this topic.
+
+---
+
+**Q1: What is the purpose of gas limit per block? What happens if the 12s slot hasn't ended but gas hits the limit — does the proposer stop and wait?**
+
+**Purpose of gas limit:**
+
+```
+No gas limit scenario:
+  Someone submits 1 tx that loops forever
+  → EVM runs forever
+  → Block never finishes executing
+  → Network halts
+
+With gas limit:
+  Every EVM operation costs gas
+  Block cap = 30M gas
+  → Any tx that hits the cap mid-execution → reverts, not included
+  → Block execution time is mathematically bounded
+```
+
+Also a **throughput throttle** — prevents state from growing so fast that only data centers can sync → network centralizes.
+
+**When gas limit is hit before 12s:**
+
+The proposer **immediately broadcasts the block — does not wait**:
+
+```
+t=0s    Slot begins, proposer selected
+t=2s    Block fills to 30M gas limit
+t=2s    Block broadcast immediately (don't wait for 12s)
+t=2–12s Other validators attest (vote to confirm)
+t=12s   Next slot begins
+```
+
+Proposer incentive reasoning is exactly right: they already collected all the tips they can fit. Adding more is impossible (protocol rejects it). Optimal strategy: fill the block as fast as possible, broadcast early. In practice a proposer can build and broadcast a block in under 1 second.
+
+Proposers prioritize **highest tip/gas txs first** from the mempool — not arrival order. That's why during congestion you pay a higher tip to jump the queue.
+
+---
+
+**Q2: Bitcoin needs to adjust its difficulty to "regression" its mined time per block to the target (10 mins), doesn't it?**
+
+Yes. Bitcoin has an **automatic difficulty adjustment** every 2,016 blocks (~2 weeks):
+
+```
+new_difficulty = old_difficulty × (target_time / actual_time)
+
+target_time = 2,016 × 10 min = 20,160 min
+
+Scenario A: miners got faster (more hashrate joined)
+  actual_time = 8,000 min
+  new_difficulty = old × (20,160 / 8,000) = old × 2.52 → harder
+
+Scenario B: miners got slower (hashrate left, e.g. China mining ban 2021)
+  actual_time = 35,000 min
+  new_difficulty = old × (20,160 / 35,000) = old × 0.576 → easier
+```
+
+"Difficulty" = the block hash must start with a certain number of leading zeros. More zeros = exponentially harder to find by chance. Miners roll dice billions of times per second until they find a number below the target threshold.
+
+This is why Bitcoin's 10 min/block has held for 16 years despite hashrate growing by orders of magnitude. The only lag is the 2-week adjustment window.
