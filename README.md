@@ -147,5 +147,16 @@ and rewards are minted in full. See the comments in `contracts/Cryptonite.sol`.
 
 - **ERC-4337 paymaster** (Session 6, Q4) — pay gas in XAE instead of ETH. This needs an
   EntryPoint + bundler running locally and is the natural next step once the basics click.
+- **Burn-rate slider in the UI** — an owner-only control to change the deflationary burn live and
+  watch its effect on `totalSupply`. No contract changes needed: `Cryptonite.sol` already exposes
+  `setBurnRateBps(uint256)` (owner-only, capped at `MAX_BURN_RATE_BPS` = 1000 bps / 10%) and emits
+  `BurnRateUpdated`. Implementation is frontend-only, mirroring the existing owner mint panel:
+  - Add a range `<input>` (0–1000 bps, i.e. 0–10%) to the owner-only card in `frontend/index.html`,
+    shown via the same `owner === account` check already in `frontend/app.js` (`refresh()`), with a
+    label displaying the current `burnRateBps / 100` as a percentage.
+  - On change, call `token.setBurnRateBps(value)` through the existing `withTx()` helper, then let
+    `refresh()` update the displayed rate.
+  - Optionally subscribe to the `BurnRateUpdated` event (like the existing `Transfer`/`Staked`
+    subscriptions) so the slider reflects changes made from other sessions/scripts.
 - Move staking into its own contract to demonstrate cross-contract `approve` + `transferFrom`.
 - A real reward treasury (cap emissions) instead of minting rewards on demand.
