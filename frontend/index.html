@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>cryptonite (XAE) — demo dApp</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>cryptonite <span class="ticker">XAE</span></h1>
+      <p class="tagline">A local demo of an ERC-20 with a deflationary burn, owner mint, and staking.</p>
+    </header>
+
+    <!-- Connection -->
+    <section class="card">
+      <div class="row between">
+        <div>
+          <div class="label">Wallet</div>
+          <div id="account" class="mono">Not connected</div>
+        </div>
+        <button id="connectBtn">Connect MetaMask</button>
+      </div>
+      <div id="networkWarn" class="warn hidden">
+        Wrong network — switch MetaMask to the Hardhat node (chainId 31337, http://127.0.0.1:8545).
+      </div>
+    </section>
+
+    <!-- Token info -->
+    <section class="card">
+      <h2>Token</h2>
+      <div class="grid">
+        <div><div class="label">Name</div><div id="tokenName" class="mono">—</div></div>
+        <div><div class="label">Symbol</div><div id="tokenSymbol" class="mono">—</div></div>
+        <div><div class="label">Total supply</div><div id="totalSupply" class="mono big">—</div></div>
+        <div><div class="label">Your balance</div><div id="balance" class="mono big">—</div></div>
+        <div><div class="label">Burn rate</div><div id="burnRate" class="mono">—</div></div>
+        <div><div class="label">Reward rate (APY)</div><div id="rewardRate" class="mono">—</div></div>
+      </div>
+    </section>
+
+    <!-- Transfer -->
+    <section class="card">
+      <h2>Transfer <span class="hint">1% is burned in transit — watch total supply drop</span></h2>
+      <div class="row">
+        <input id="transferTo" type="text" placeholder="Recipient address (0x…)" class="grow" />
+        <input id="transferAmount" type="number" placeholder="Amount" min="0" step="any" />
+        <button id="transferBtn">Send</button>
+      </div>
+    </section>
+
+    <!-- Staking -->
+    <section class="card">
+      <h2>Staking</h2>
+      <div class="grid">
+        <div><div class="label">Staked</div><div id="staked" class="mono big">—</div></div>
+        <div><div class="label">Pending reward</div><div id="pending" class="mono big">—</div></div>
+      </div>
+      <div class="row">
+        <input id="stakeAmount" type="number" placeholder="Amount" min="0" step="any" />
+        <button id="stakeBtn">Stake</button>
+        <button id="unstakeBtn" class="secondary">Unstake</button>
+        <button id="claimBtn" class="secondary">Claim reward</button>
+      </div>
+    </section>
+
+    <!-- Owner-only mint -->
+    <section id="ownerCard" class="card hidden">
+      <h2>Owner mint <span class="hint">issue new supply (you are the contract owner)</span></h2>
+      <div class="row">
+        <input id="mintTo" type="text" placeholder="Recipient address (0x…)" class="grow" />
+        <input id="mintAmount" type="number" placeholder="Amount" min="0" step="any" />
+        <button id="mintBtn">Mint</button>
+      </div>
+    </section>
+
+    <div id="status" class="status hidden"></div>
+
+    <script src="lib/ethers.umd.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

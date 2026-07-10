@@ -1,0 +1,13 @@
+node_modules/
+artifacts/
+cache/
+coverage/
+coverage.json
+typechain-types/
+
+# Generated at deploy time for the frontend
+frontend/deployment.json
+
+# Environment / editor
+.env
+.DS_Store

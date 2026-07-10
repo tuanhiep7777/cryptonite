@@ -1,0 +1,21 @@
+{
+  "name": "cryptonite-demo",
+  "version": "1.0.0",
+  "description": "Local demonstration of the cryptonite (XAE) token: ERC-20 with deflationary burn, owner mint, and staking rewards.",
+  "license": "MIT",
+  "scripts": {
+    "node": "hardhat node",
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.js --network localhost",
+    "demo": "hardhat run scripts/demo.js --network localhost",
+    "balance": "hardhat run scripts/balance.js --network localhost",
+    "reset": "hardhat run scripts/reset.js --network localhost",
+    "frontend": "npx serve frontend"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.1.0",
+    "hardhat": "^2.22.0"
+  }
+}
